@@ -19,28 +19,25 @@ import plotly.express as px
 import plotly.graph_objs as go
 from sklearn import datasets
 import csv
-import mysql.connector
 import math
 import statistics
 from uncertainties import ufloat
 import sqlalchemy as sa
 from sqlAnalysis.analysis import  Analysis
 from sqlAnalysis.analysis_utils import   AnalysisUtils
+import mysql.connector
+from database import sql_database
 from pages.main_layout import mainLayout
-# establish a connection with  MySQL server 
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="PixelDcs_Dc0",
-    database="SQC"
-)
-mycursor = mydb.cursor()
 
 # Read data
 # The iris dataset is a classic and very easy multi-class classification dataset.
-iris_raw = datasets.load_iris()
-iris = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
-
+def sql_dash_interface(sql_database = None):
+    iris_raw = datasets.load_iris()
+    iris = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
+    
+    Lab_df = pd.read_sql("SELECT DISTINCT lab_branch FROM Lab ", sql_database)
+    QC_df = pd.read_sql("SELECT qc_lot_number,qc_name FROM QC_Parameters ", sql_database)
+    return Lab_df
 # Read SQL query or database table into a DataFrame.
 # Array of table attributes
 Mean_Table_cols = ['Assigned Mean', 'Caculated Mean', 'Assigned SD', 'Calculated SD']
@@ -50,13 +47,13 @@ CV_Table_cols = ['CV %', 'MU Measurments']
 Mean_Table_values = [0, 0, 0, 0]
 CV_Table_values = [0, 0]
 
-# Main Application page
-app = Dash('Test SQL', external_stylesheets=[
-                dbc.themes.MINTY, dbc.themes.BOOTSTRAP])
-# ----------------------------------------------------------Page Components---------------------------------------------------
-
-# -----------------------------------------------------------Whole Page-------------------------------------------------------------
-# Call app cards
-app.layout = mainLayout().define_main_page()
 if __name__ == '__main__':
+    database = sql_database.SQLDataBase()
+    mydb = database.get_database()
+    Lab_df = sql_dash_interface(sql_database = mydb)
+    # Main Application page
+    app = Dash('Test SQL', external_stylesheets=[
+                    dbc.themes.MINTY, dbc.themes.BOOTSTRAP])
+    # Call app cards
+    app.layout = mainLayout().define_main_page(Lab_df = Lab_df)
     app.run_server(debug=True)

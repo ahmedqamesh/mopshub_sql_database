@@ -20,11 +20,15 @@ from dash_bootstrap_components._components.NavItem import NavItem
 from dash_bootstrap_components._components.Row import Row
 # Space components
 space = dbc.Row("  ", style={"height": "10px"})
+# Mini space
+miniSpace = dbc.Row("  ", style={"height": "5px"})
+# Cards shadow
+cardShadow = ["shadow-sm p-3 mb-5 bg-white rounded", {"margin-top": "-2em"}]
 class mainLayout(object):
     def __init__(self):
         pass
     
-    def define_main_page(self):
+    def define_main_page(self, Lab_df = False):
         main_page = dbc.Container(
                 [
                     dbc.Row(dbc.Col(self.define_navigation_bar(), md=12)),
@@ -42,7 +46,7 @@ class mainLayout(object):
                                         # dcc.Store(id='myresult_qc_Duration_memory'),                                                       
                                         # dbc.Col(space),
                                         dbc.Col(self.define_duration_card()),
-                                        # dbc.Col(Lab_control),
+                                        dbc.Col(self.define_lab_control(Lab_df = Lab_df)),
                                         # dbc.Col(Analyzer_control,),
                                         # dbc.Col(Test_control),
                                         # dbc.Col(QC),
@@ -105,6 +109,35 @@ class mainLayout(object):
             
             )        
         return main_page
+
+    def define_lab_control(self, Lab_df = False):
+        # Card to select Lab branch and unit of the data
+        Lab_control = dbc.Card(
+            [
+                dbc.FormGroup(
+                    [
+                    dbc.Label('Lab'),
+                    dbc.Col(space),
+                    dcc.Dropdown(
+                        id='Lab_branch',
+                        options=[
+                            {'label':name, 'value':name} for name in Lab_df.lab_branch],
+                        placeholder = 'Select Branch'
+                    ),
+                    dbc.Col(space),
+                    dcc.Dropdown(
+                        id='Lab_unit',
+                        disabled = True,
+                        placeholder = 'Select Unit'
+                    ),
+                    ],
+                ),
+            ],
+            body=True,
+            className=cardShadow[0],
+            style=cardShadow[1]
+        )
+        return Lab_control
     
     def define_duration_card(self):
 

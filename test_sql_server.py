@@ -26,9 +26,15 @@ import sqlalchemy as sa
 from sqlAnalysis.analysis import  Analysis
 from sqlAnalysis.analysis_utils import   AnalysisUtils
 import mysql.connector
-from database import sql_database
+from db import sql_database
 from pages.main_layout import mainLayout
-
+# mydb = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     passwd="PixelDcs_Dc0",
+#     database="SQC"
+# )
+# mycursor = mydb.cursor()
 # Read data
 # The iris dataset is a classic and very easy multi-class classification dataset.
 def sql_dash_interface(sql_database = None):

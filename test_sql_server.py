@@ -28,22 +28,13 @@ from sqlAnalysis.analysis_utils import   AnalysisUtils
 import mysql.connector
 from db import sql_database
 from pages.main_layout import mainLayout
-# mydb = mysql.connector.connect(
-#     host="localhost",
-#     user="root",
-#     passwd="PixelDcs_Dc0",
-#     database="SQC"
-# )
-# mycursor = mydb.cursor()
-# Read data
+
 # The iris dataset is a classic and very easy multi-class classification dataset.
 def sql_dash_interface(sql_database = None):
     iris_raw = datasets.load_iris()
     iris = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
-    
-    Lab_df = pd.read_sql("SELECT DISTINCT lab_branch FROM Lab ", sql_database)
-    QC_df = pd.read_sql("SELECT qc_lot_number,qc_name FROM QC_Parameters ", sql_database)
-    return Lab_df
+    QC_df = pd.read_sql("SELECT qc_lot_number,qc_name FROM QC_Parameters ", sql_database) 
+
 # Read SQL query or database table into a DataFrame.
 # Array of table attributes
 Mean_Table_cols = ['Assigned Mean', 'Caculated Mean', 'Assigned SD', 'Calculated SD']
@@ -56,10 +47,9 @@ CV_Table_values = [0, 0]
 if __name__ == '__main__':
     database = sql_database.SQLDataBase()
     mydb = database.get_database()
-    Lab_df = sql_dash_interface(sql_database = mydb)
     # Main Application page
     app = Dash('Test SQL', external_stylesheets=[
                     dbc.themes.MINTY, dbc.themes.BOOTSTRAP])
     # Call app cards
-    app.layout = mainLayout().define_main_page(Lab_df = Lab_df)
+    app.layout = mainLayout(mydb = mydb).define_main_page()
     app.run_server(debug=True)

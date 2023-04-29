@@ -54,7 +54,7 @@ class SQLDataBase():
             "CREATE TABLE IF NOT EXISTS Calculated_Parameters (ids INT NOT NULL, no_of_points INT, mu INT, ewma INT, cusum INT, PRIMARY KEY(ids))")
         
         mycursor.execute(
-            "CREATE TABLE IF NOT EXISTS Lab (lab_id INT NOT NULL, a_id INT NOT NULL, lab_branch VARCHAR(255), lab_unit VARCHAR(255), PRIMARY KEY(lab_id), FOREIGN KEY (a_id) REFERENCES Analyzer(analyzer_id))")
+            "CREATE TABLE IF NOT EXISTS patch_panels (lab_id INT NOT NULL, a_id INT NOT NULL, patch_panel VARCHAR(255), hw_unit VARCHAR(255), PRIMARY KEY(lab_id), FOREIGN KEY (a_id) REFERENCES Analyzer(analyzer_id))")
         
         mycursor.execute("SHOW TABLES")
         for x in mycursor:
@@ -281,24 +281,24 @@ class SQLDataBase():
         mydb.commit()
     
     def insert_data_lab(self): 
-        sql = "INSERT INTO Lab (lab_id, a_id, lab_branch, lab_unit) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO patch_panels (lab_id, a_id, patch_panel, hw_unit) VALUES (%s, %s, %s, %s)"
         val = [
-        ('0001', '1001', 'GTS', 'Hematology'),  # 1
-        ('0002', '1002', 'GTS', 'Hematology'),  # 2
-        ('0003', '1003', 'GTS', 'Hematology'),  # 3
-        ('0004', '1004', 'GTS', 'Chemistry'),  # 1
-        ('0005', '1005', 'GTS', 'Chemistry'),  # 2
-        ('0006', '1006', 'GTS', 'Chemistry'),  # 3
-        ('0007', '1007', 'GTT', 'Microbiology'),  # 1
-        ('0008', '1008', 'GTT', 'Microbiology'),  # 2
-        ('0009', '1009', 'GTT', 'Microbiology'),  # 3
-        ('0010', '1010', 'GTT', 'Immunology'),  # 1
-        ('0011', '1011', 'GTT', 'Immunology'),  # 2
-        ('0012', '1012', 'GSS', 'Immunology'),  # 2
-        ('0013', '1013', 'GSS', 'Hematology'),  # 3
-        ('0014', '1014', 'GSS', 'Cytology'),  # 1
-        ('0015', '1015', 'GSS', 'Cytology'),  # 2
-        ('0016', '1016', 'GSS', 'Cytology'),  # 3
+        ('0001', '1001', 'PP0', 'EOS'),  # 1
+        ('0002', '1002', 'PP0', 'EOS'),  # 2
+        ('0003', '1003', 'PP0', 'EOS'),  # 3
+        ('0004', '1004', 'PP0', 'EOS'),  # 1
+        ('0005', '1005', 'PP0', 'Opto Boards'),  # 2
+        ('0006', '1006', 'PP0', 'Opto Boards'),  # 3
+        ('0007', '1007', 'PP1', 'Opto Boards'),  # 1
+        ('0008', '1008', 'PP1', 'Opto Boards'),  # 2
+        ('0009', '1009', 'PP1', 'Opto Boards'),  # 3
+        ('0010', '1010', 'PP1', 'Opto Boards'),  # 1
+        ('0011', '1011', 'PP1', 'Opto Boards'),  # 2
+        ('0012', '1012', 'PP2', 'Monitoring Card'),  # 2
+        ('0013', '1013', 'PP2', 'Opto Boards'),  # 3
+        ('0014', '1014', 'PP2', 'Monitoring Card'),  # 1
+        ('0015', '1015', 'PP2', 'Monitoring Card'),  # 2
+        ('0016', '1016', 'PP2', 'Opto Boards')  # 3
         ]
         mycursor.executemany(sql, val)
         mydb.commit()

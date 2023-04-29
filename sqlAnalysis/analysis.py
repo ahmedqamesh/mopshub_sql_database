@@ -9,37 +9,56 @@ class Analysis(object):
     def __init__(self):
         pass
     # Conversion functions
-    def adc_conversion(self, adc_channels_reg="V", value=None,resistor_ratio = 1,ref_voltage = 1.226):
-        '''
-        the function will convert each ADC value into a reasonable physical quantity in volt
-        > MOPS has 12 bits ADC value ==> 2^12 = 4096 (this means that we can read from 0 -> 4096 different decimal values)
-        > The full 12 bits ADC covers up to 850mV [or ref_voltage]
-        >This means that each ADC value corresponds to 850/4096 = 0.207 mV for 1 bit this is the resolution of the ADC)
-        > The true voltage on each ADC is V = value * resistance
-        Example: 
-        To calibrate each ADC value 
-        1. multiply by 0.207 to give the answer in mV
-        2. multiply by the resistor ratio to get the actual voltage
-        '''
-        if value is not None:
-            if adc_channels_reg == "V":
-                value = value * ref_voltage/4096  *resistor_ratio
-            elif adc_channels_reg == "T":
-                value = value * ref_voltage/4096 * resistor_ratio
-            else:
-                value = value
-        return value
+    # Computing mean for array of data 
+    def Data_Mean(self, dataArray):
+        return round(statistics.mean(dataArray),2)
+    
+    
+    # Computing standard deviation for array of data
+    def Data_SD(self,dataArray):
+        return round(statistics.stdev(dataArray),1) 
+    
+    
+    # calculate pooled standard deviation (SD)
+    def Pooled_SD(self,dataArray1,dataArray2):
+        n1, n2 = len(dataArray1),len(dataArray2)
+        dataArray1_SD, dataArray2_SD = Data_SD(dataArray1) ,Data_SD(dataArray2)
+        pooled_standard_deviation = math.sqrt(((n1 - 1)*dataArray1_SD * dataArray1_SD +(n2-1)*dataArray2_SD * dataArray2_SD) / (n1 + n2-2))
+        return round(pooled_standard_deviation,1)
+    
+    # Calculate Coefficient of Variation for data array(CV)
+    def Data_CV(self,dataArray):
+        dataArray_Mean = Data_Mean(dataArray)
+        dataArray_SD = Data_SD(dataArray)
+        return round((dataArray_SD/dataArray_Mean)*100,2)
+    
+    # Calculate Measurments Uncertainty (MU)
+    def Data_MU(self,dataArray):
+        dataArray_MU = Data_Mean(dataArray)
+        return str(ufloat(dataArray_MU,0.01))
+    
+    # Compute the Calculate the Exponentially weighted moving average (EWMA)
+    def Data_EWMA(self,dataArray):
+      EWMA = pd.DataFrame(dataArray).ewm
+      return EWMA
+    
+    # Calculate Cumulative Sum of data array (CUSUM)
+    def Data_CUSUM(self,dataArray):
+        return np.cumsum(dataArray)
+    
+    
+    # Calculate all and return an array of all statistical calculations 
+    def Calculate_All(self,dataArray):
+       dataArray_Mean = self.Data_Mean(dataArray)
+       dataArray_SD = self.Data_SD(dataArray)
+       dataArray_CV = self.Data_CV(dataArray)
+       dataArray_MU = self.Data_MU(dataArray)
+       dataArray_EWMA = self.Data_EWMA(dataArray)
+       dataArray_CUSUM = self.Data_CUSUM(dataArray)
+       Calculations_Array = [dataArray_Mean, dataArray_SD, dataArray_CV, dataArray_MU]
+       return Calculations_Array
 
-    def NTC_convertion(self,value =None):
-        '''
-        To convert ADC data to temperature you first find the thermistor resistance and then use it to find the temperature.
-        https://www.jameco.com/Jameco/workshop/techtip/temperature-measurement-ntc-thermistors.html
-        Rt = R0 * (( Vs / Vo ) - 1) 
-        
-        '''       
-        return value
-    
-    
+
     def binToHexa(self, n):
         # convert binary to int
         num = int(n, 2)   
